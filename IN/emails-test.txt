@@ -1,0 +1,6 @@
+test1@test.com:test
+test2@test.fr:test
+test3@test.FR:test
+test4@test.ru:test
+test5@test.com:test
+test6@test.be:test

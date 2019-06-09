@@ -11,11 +11,14 @@ path = './IN/*.txt'
 # The default value will extract french emails
 language = 'fr'
 
+def has_cyrillic(text):
+    return bool(re.search('[а-яА-Я]', text))
+
 files = glob.glob(path)
 for name in files:
     try:
         # Open each .txt file
-        with open(name) as s:
+        with open(name, encoding="ISO-8859-1") as s:
             for line in s:
                 # Remove blank spaces and put each line in lowercase letters
                 line = line.strip().lower()
@@ -24,18 +27,19 @@ for name in files:
                 regex = re.compile(r"(\.%s(:|;))" %language)
                 match = regex.search(line)
                 if match is not None:
-                    # Define if the line is using ':' or ';'
-                    ext = line.split('.%s' %language)[1][0]
+                    if has_cyrillic(line) is False:
+                        # Define if the line is using ':' or ';'
+                        ext = line.split('.%s' %language)[1][0]
 
-                    # Reformat <email>:<xxx> data (some files may use the ';' delimiter which is not cool)
-                    email = line.split(ext)[0]
-                    xxx = line.split(ext)[1]
+                        # Reformat <email>:<xxx> data (some files may use the ';' delimiter which is not cool)
+                        email = line.split(ext)[0]
+                        xxx = line.split(ext)[1]
 
-                    # Print in console and extract in 'OUT.txt' file
-                    print('{}:{}'.format(email, xxx))
-                    f = open('OUT.txt', 'a')
-                    f.write(email+':'+xxx+'\n')
-                    f.close()
+                        # Print in console and extract in 'OUT.txt' file
+                        print('{}:{}'.format(email, xxx))
+                        f = open('OUT.txt', 'a')
+                        f.write(email+':'+xxx+'\n')
+                        f.close()
 
     except IOError as exc:
         if exc.errno != errno.EISDIR:
